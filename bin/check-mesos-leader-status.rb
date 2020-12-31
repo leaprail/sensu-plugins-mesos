@@ -43,6 +43,13 @@ class MesosLeaderNodeStatus < Sensu::Plugin::Check::CLI
          default: 5050,
          required: false
 
+  option :protocol,
+         description: 'Marathon protocol [http/https]',
+         short: '-P PROTOCOL',
+         long: '--protocol PROTOCOL',
+         required: false,
+         default: 'http'
+
   option :uri,
          description: 'Endpoint URI',
          short: '-u URI',
@@ -61,7 +68,7 @@ class MesosLeaderNodeStatus < Sensu::Plugin::Check::CLI
     port = config[:port]
     uri = config[:uri]
     begin
-      r = RestClient::Resource.new("http://#{server}:#{port}#{uri}", timeout: config[:timeout]).get
+      r = RestClient::Resource.new("#{config[:protocol]}://#{server}:#{port}#{uri}", timeout: config[:timeout]).get
       if r.code == 503
         critical "Master on #{server} is not responding"
       end

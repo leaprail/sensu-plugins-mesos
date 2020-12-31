@@ -43,6 +43,13 @@ class MesosNodeStatus < Sensu::Plugin::Check::CLI
          default: 5050,
          required: false
 
+  option :protocol,
+         description: 'Marathon protocol [http/https]',
+         short: '-P PROTOCOL',
+         long: '--protocol PROTOCOL',
+         required: false,
+         default: 'http'
+
   option :uri,
          description: 'Endpoint URI',
          short: '-u URI',
@@ -63,7 +70,7 @@ class MesosNodeStatus < Sensu::Plugin::Check::CLI
     failures = []
     servers.split(',').each do |server|
       begin
-        r = RestClient::Resource.new("http://#{server}:#{port}#{uri}", timeout: config[:timeout]).get
+        r = RestClient::Resource.new("#{config[:protocol]}://#{server}:#{port}#{uri}", timeout: config[:timeout]).get
         if r.code != 200
           failures << "Mesos on #{server} is not responding"
         end

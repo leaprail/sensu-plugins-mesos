@@ -52,6 +52,13 @@ class MesosGpuBalanceCheck < Sensu::Plugin::Check::CLI
          default: 5050,
          required: false
 
+  option :protocol,
+         description: 'Marathon protocol [http/https]',
+         short: '-P PROTOCOL',
+         long: '--protocol PROTOCOL',
+         required: false,
+         default: 'http'
+
   option :uri,
          description: 'Endpoint URI',
          short: '-u URI',
@@ -117,7 +124,7 @@ class MesosGpuBalanceCheck < Sensu::Plugin::Check::CLI
   # @return [Url] Url representing the Leader
 
   def get_leader_url(server, port)
-    RestClient::Resource.new("http://#{server}:#{port}/redirect").get.request.url
+    RestClient::Resource.new("#{config[:protocol]}://#{server}:#{port}/redirect").get.request.url
   end
 
   # Parses JSON data as returned from Mesos's metrics API

@@ -60,6 +60,13 @@ class MesosLostTasksCheck < Sensu::Plugin::Check::CLI
          proc: proc(&:to_i),
          default: 5
 
+  option :protocol,
+         description: 'Marathon protocol [http/https]',
+         short: '-P PROTOCOL',
+         long: '--protocol PROTOCOL',
+         required: false,
+         default: 'http'
+
   option :uri,
          description: 'Endpoint URI',
          short: '-u URI',
@@ -117,7 +124,7 @@ class MesosLostTasksCheck < Sensu::Plugin::Check::CLI
   end
 
   def get_leader_url(server, port)
-    RestClient::Resource.new("http://#{server}:#{port}/redirect").get.request.url
+    RestClient::Resource.new("#{config[:protocol]}://#{server}:#{port}/redirect").get.request.url
   end
 
   # Parses JSON data as returned from Mesos's metrics API

@@ -42,6 +42,13 @@ class ChronosNodeStatus < Sensu::Plugin::Check::CLI
          long: '--port PORT',
          default: '80'
 
+  option :protocol,
+         description: 'Marathon protocol [http/https]',
+         short: '-P PROTOCOL',
+         long: '--protocol PROTOCOL',
+         required: false,
+         default: 'http'
+
   option :uri,
          description: 'Endpoint URI',
          short: '-u URI',
@@ -61,7 +68,7 @@ class ChronosNodeStatus < Sensu::Plugin::Check::CLI
     failures = []
     servers.split(',').each do |server|
       begin
-        r = RestClient::Resource.new("http://#{server}:#{config[:port]}#{uri}", timeout: config[:timeout]).get
+        r = RestClient::Resource.new("#{config[:protocol]}://#{server}:#{config[:port]}#{uri}", timeout: config[:timeout]).get
         if r.code != 200
           failures << "Chronos on #{server} is not responding"
         end
